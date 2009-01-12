@@ -75,10 +75,8 @@ class PhaseDiagram < Shoes
     @n,@t = [],[]
 
     table.column_names.each_with_index do |item,index|
-      @n[index] = edit_line :text => item, :width => 80,:height => 30
-      #:state => 'disabled'
+      @n[index] = edit_line :text => item, :width => 80,:height => 30,:state => 'disabled'
     end
-    para "\n"*2
 
     @d=[]
     table.size.times do |x|
@@ -89,7 +87,6 @@ class PhaseDiagram < Shoes
         end
         button "delete" do @d[x].remove && @t[x]=[] end
       end
-      para "\n"*2
     end
 
     button "保存" do
