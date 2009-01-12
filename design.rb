@@ -72,18 +72,22 @@ class PhaseDiagram < Shoes
   def ele_sub
     table = Table('element.csv')
 
-    @n = []
+    @n,@t = [],[]
+
     table.column_names.each_with_index do |item,index|
-      @n[index] = edit_line :text => item, :width => 80,:height => 30,:state => 'disabled'
+      @n[index] = edit_line :text => item, :width => 80,:height => 30
+      #:state => 'disabled'
     end
     para "\n"*2
 
-    @t = []
+    @d=[]
     table.size.times do |x|
       @t[x]=[]
-
-      table.column_names.size.times do |y|
-       @t[x][y] = edit_line table[x][y], :width => 80,:height => 30
+      @d[x] = flow do
+        table.column_names.size.times do |y|
+          @t[x][y] = edit_line table[x][y], :width => 80
+        end
+        button "delete" do @d[x].remove && @t[x]=[] end
       end
       para "\n"*2
     end
@@ -91,8 +95,8 @@ class PhaseDiagram < Shoes
     button "保存" do
       File.open('element.csv','w+') do |x|
         x << @n.map(&:text).join(',') + "\n"
-        @t.size.times do |y|
-          x << @t[y].map(&:text).join(',') + "\n"
+        @t.map do |y|
+          x << y.map(&:text).join(',') + "\n" unless y.empty?
         end
       end
     end
