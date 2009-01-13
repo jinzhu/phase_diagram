@@ -1,15 +1,22 @@
 CONFIG_PATH = "#{ENV['HOME']}/.phase_diagram"
 
 class Shoes::Panel < Shoes::Widget
-  def initialize(&block)
-    flow :top => 650,:left => 20 do
-      button "新建" ,:width => 200 do
-        new
-      end
 
+  def initialize(&block)
+    button "新建" ,:width => 200,:top => 650 do
+      new && init_operate && init_select
+    end
+    init_operate && init_select
+  end
+
+  def init_operate
+    @operate.clear if @operate
+
+    items = ["相图","元素转换表","修改相图","化学成分","化学组成表","删除"]
+
+    @operate = flow :top => 650,:left => 220 do
       para "选择操作"
-      items = ["相图","元素转换表","修改相图","化学成分","化学组成表","删除"]
-      list_box :items => items,:width => 200 do |x|
+      list_box :items => items,:width => 200,:left => 100 do |x|
         case x.text
         when "相图" then
           $current_item.show
@@ -22,14 +29,21 @@ class Shoes::Panel < Shoes::Widget
           end
         end
       end
+    end
+  end
 
-      @selected = list_box :width => 200,:items => Dir.entries(CONFIG_PATH).reject{|x| x =~ /\.+/} do |x|
+  def init_select
+    @selected.clear if @selected
+
+    items = Dir.entries(CONFIG_PATH).reject{|x| x =~ /\.+/}
+
+    @selected = flow :top => 650,:left => 540 do
+      para "选择相图"
+      list_box :width => 200,:items => items,:left => 100 do |x|
         show(x.text)
       end
     end
   end
-
-
 
   def show(args)
     $current_item = Pd.new(args)
