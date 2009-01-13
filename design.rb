@@ -109,6 +109,8 @@ class PhaseDiagram < Shoes
     Dir.chdir(dir)
 
       config = YAML.load_file('config')
+
+
       table = File.exist?('element.csv') ? Table('element.csv') : []
 
       t = config.keys.concat(table.column(table.column_names[0]))
@@ -122,6 +124,10 @@ class PhaseDiagram < Shoes
       end
 
       _init_content(File.join(dir,'image'))
+
+      config.map do |x|
+        oval :top => x[1][0],:left => x[1][1],:width => 5,:height => 5
+      end
   end
 
   protected
