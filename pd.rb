@@ -8,8 +8,19 @@ class Pd
 
   def show
     Dir.chdir(@path)
-    $content.image = 'image'
 
+    # 更换图片
+    $content.image = 'image'
+    # 画出三个顶点
+    @config.map do |x|
+      $content.fill "#000"
+      $content.oval :top => x[1][0],:left => x[1][1],:width => 5,:height => 5
+    end
+
+    show_sidebar
+  end
+
+  def show_sidebar
     $sidebar.content do
       table = File.exist?('element.csv') ? Table('element.csv') : []
 
@@ -22,11 +33,6 @@ class Pd
         $app.para t[x],:left => 10
         @it[x] = $app.edit_line :width => 100,:left => 100
       end
-    end
-
-    @config.map do |x|
-      $content.fill "#000"
-      $content.oval :top => x[1][0],:left => x[1][1],:width => 5,:height => 5
     end
   end
 end
