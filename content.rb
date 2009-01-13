@@ -13,7 +13,7 @@ class Shoes::Content < Shoes::Widget
     @content.clear if @content
 
     @content = flow(:top => 0,:left => 200,:height => 600) do
-      yield
+      yield if block
     end
   end
 end

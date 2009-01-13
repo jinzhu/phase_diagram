@@ -51,6 +51,7 @@ class Shoes::Panel < Shoes::Widget
   end
 
   def new
+    $content.content()
     $sidebar.content do
       stack do
         para "名称:"
@@ -58,7 +59,7 @@ class Shoes::Panel < Shoes::Widget
 
         button '添加相图图片',:width => 200,:margin_top => 20 do
           @file = ask_open_file
-          _init_content(@file)
+          $content.image=(@file)
         end
 
         para "相图主要成分及对应点:",:margin_top => 20
@@ -81,6 +82,7 @@ class Shoes::Panel < Shoes::Widget
           Dir.mkdir(dir) unless File.exist?(dir)
           Dir.chdir(dir)
 
+          element = {}
           3.times do |x|
             eval "element.merge!(@text#{x}.text => [@e#{x}.top,@e#{x}.left])"
           end
@@ -93,7 +95,8 @@ class Shoes::Panel < Shoes::Widget
           # Copy Image
           FileUtils.copy(@file,'image') if @file
 
-          _init_panel
+          # refresh
+          init_select
         end
       end
     end
