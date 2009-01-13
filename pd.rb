@@ -8,9 +8,8 @@ class Pd
   end
 
   def show
-    Dir.chdir(@path)
     # 更换图片
-    $content.image = 'image'
+    $content.image = File.join(@path,'image')
     # 画出三个顶点
     @config.map do |x|
       $content.draw_oval(x[1][0],x[1][1])
@@ -81,14 +80,14 @@ class Pd
 
       # 保存内容为 csv 文件
       $content.button "保存",:width => 100 do
-        File.open('element.csv','w+') do |x|
+        File.open(File.join(@path,'element.csv'),'w+') do |x|
           x << ',' + @config.keys.join(',') + "\n"
           t.map do |y|
             x << y.map(&:text).join(',') + "\n" unless y.empty?
           end
         end
         # 更新边
-        @table  = Table('element.csv')
+        @table  = Table(File.join(@path,'element.csv'))
         show_sidebar
       end
     end
