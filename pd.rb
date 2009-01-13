@@ -1,4 +1,6 @@
 class Pd
+  attr :path
+
   def initialize(args)
     @path      = File.join( CONFIG_PATH , args )
     @config    = YAML.load_file(File.join( @path ,'config'))

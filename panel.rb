@@ -24,8 +24,8 @@ class Shoes::Panel < Shoes::Widget
           $current_item.show_element
         when "删除" then
           if confirm("确定删除?")
-            FileUtils.rm_rf(File.join(CONFIG_PATH,@current_item))
-            _init_panel
+            FileUtils.rm_rf($current_item.path)
+            init_select
           end
         end
       end
