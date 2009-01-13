@@ -33,6 +33,8 @@ class Pd
   end
 
   def show_element
+    show_sidebar
+
     $content.content do
       # 表格标题
       @config.keys.each_with_index do |x,y|
@@ -87,6 +89,7 @@ class Pd
           end
         end
         # 更新边
+        @table  = Table('element.csv')
         show_sidebar
       end
     end
