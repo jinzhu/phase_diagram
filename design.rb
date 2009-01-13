@@ -4,7 +4,7 @@ end
 
 $LOAD_PATH <<  File.dirname(__FILE__)
 
-['ruport','yaml','symbol','panel','content','sidebar'].each {|x| require x}
+['ruport','yaml','symbol','panel','content','sidebar','pd'].each {|x| require x}
 
 
 Shoes.app :width => 1000,:height => 800,:title => '相图分析' do

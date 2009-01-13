@@ -89,12 +89,10 @@ class Shoes::Panel < Shoes::Widget
 
 
   def show(args)
-    # @current_item = args
-    dir = File.join( CONFIG_PATH , args )
-    Dir.chdir(dir)
+    $current_item = Pd.new(args)
 
-    config = YAML.load_file('config')
-    $content.image = 'image'
+    $current_item.show
+
 
 # 
 #     table = File.exist?('element.csv') ? Table('element.csv') : []
