@@ -13,8 +13,7 @@ class Pd
     $content.image = 'image'
     # 画出三个顶点
     @config.map do |x|
-      $content.fill "#000"
-      $content.oval :top => x[1][0],:left => x[1][1],:width => 5,:height => 5
+      $content.draw_oval(x[1][0],x[1][1])
     end
     show_sidebar
   end

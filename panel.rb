@@ -69,7 +69,7 @@ class Shoes::Panel < Shoes::Widget
 
            button('位置',:width => 200) do
              click do |_z,_x,_y|
-               @e#{x} ? @e#{x}.move(_x,_y) : (@e#{x} = oval(_x,_y,5,5))
+               @e#{x} ? @e#{x}.move(_x,_y) : (@e#{x}=$content.draw_oval(_x,_y))
              end
            end
           RUBY
