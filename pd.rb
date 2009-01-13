@@ -1,9 +1,10 @@
 class Pd
-  attr :path,:config
-
   def initialize(args)
-    @path   = File.join( CONFIG_PATH , args )
-    @config = YAML.load_file(File.join( path ,'config'))
+    @path      = File.join( CONFIG_PATH , args )
+    @config    = YAML.load_file(File.join( @path ,'config'))
+    Dir.chdir(@path)
+    @table     = File.exist?('element.csv') ? Table('element.csv') : []
+    @elements  = @config.keys
   end
 
   def show
@@ -20,26 +21,25 @@ class Pd
 
   def show_element
     $content.content do
-      table = File.exist?('element.csv') ? Table('element.csv') : []
       n,t,d = [],[],[]
 
       @config.keys.each_with_index do |x,y|
-        $content.edit_line '', :width => 150,:state => 'disabled' if y == 0
-        n[y] = $content.edit_line :text => x, :width => 150,:state => 'disabled'
+        $app.edit_line '', :width => 150,:state => 'disabled' if y == 0
+        n[y] = $app.edit_line :text => x, :width => 150,:state => 'disabled'
       end
 
       items = $content.flow do
-        table.size.times do |x|
+        @table.size.times do |x|
           t[x]=[]
           d[x] = $content.flow do
             (@config.keys.size + 1).times do |y|
-              t[x][y] = $content.edit_line table[x] ? table[x][y] : '' , :width => 150
+              t[x][y] = $content.edit_line @table[x] ? @table[x][y] : '' , :width => 150
             end
             $content.button "删除",:width => 100 do d[x].remove && t[x]=[] end
           end
         end
       end
-      $content.para "\n"
+      $app.para "\n"
 
       tt    = []
       (@config.keys.size + 1).times do |y|
@@ -76,15 +76,12 @@ class Pd
 
   def show_sidebar
     $sidebar.content do
-      table = File.exist?('element.csv') ? Table('element.csv') : []
+      t = @elements.concat(@table.column(@table.column_names[0]))
 
-      t = @config.keys.concat(table.column(table.column_names[0]))
       @it = []
-
-
       t.size.times do |x|
-        $app.para "\n",:height => 10
-        $app.para t[x],:left => 10
+        $app.para "\n"
+        $app.para $app.strong(t[x]) ,:stroke => "#f00"
         @it[x] = $app.edit_line :width => 100,:left => 100
       end
     end
