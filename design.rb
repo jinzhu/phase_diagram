@@ -82,17 +82,41 @@ class PhaseDiagram < Shoes
       n[y] = edit_line :text => x, :width => 200,:state => 'disabled'
     end
 
-    table.size.times do |x|
-      t[x]=[]
-      d[x] = flow do
-        (config.keys.size + 1).times do |y|
-          t[x][y] = edit_line table[x] ? table[x][y] : '' , :width => 200
+    items = flow do
+      table.size.times do |x|
+        t[x]=[]
+        d[x] = flow do
+          (config.keys.size + 1).times do |y|
+            t[x][y] = edit_line table[x] ? table[x][y] : '' , :width => 200
+          end
+          button "删除",:width => 100 do d[x].remove && t[x]=[] end
         end
-        button "delete" do d[x].remove && t[x]=[] end
       end
     end
+    para "\n"
 
+    tt    = []
+    (config.keys.size + 1).times do |y|
+      tt[y] = edit_line '' , :width => 200
+    end
+
+    button "添加",:width => 100 do
+      items.append do
+        size = t.size
+        t[size] = []
+        d[size] = flow do
+          (config.keys.size + 1).times do |x|
+            t[size][x] = edit_line tt[x].text, :width => 200
+          end
+
+          button "删除",:width => 100 do
+            d[size].remove && t[t.size]=[]
+          end
+        end
+      end
+    end
     para "\n"*2
+
     button "保存",:width => 100 do
       File.open('element.csv','w+') do |x|
         x << ',' + n.map(&:text).join(',') + "\n"
@@ -101,6 +125,7 @@ class PhaseDiagram < Shoes
         end
       end
     end
+
   end
 
   def show(args)
@@ -108,27 +133,27 @@ class PhaseDiagram < Shoes
     dir = File.join( CONFIG_PATH , args )
     Dir.chdir(dir)
 
-      config = YAML.load_file('config')
+    config = YAML.load_file('config')
 
 
-      table = File.exist?('element.csv') ? Table('element.csv') : []
+    table = File.exist?('element.csv') ? Table('element.csv') : []
 
-      t = config.keys.concat(table.column(table.column_names[0]))
-      @it = []
+    t = config.keys.concat(table.column(table.column_names[0]))
+    @it = []
 
-      @items.clear do
-        t.size.times do |x|
-          para "\n",:height => 10
-          para t[x],:left => 10
-          @it[x] = edit_line :width => 100,:left => 100
-        end
+    @items.clear do
+      t.size.times do |x|
+        para "\n",:height => 10
+        para t[x],:left => 10
+        @it[x] = edit_line :width => 100,:left => 100
       end
+    end
 
-      _init_content(File.join(dir,'image'))
+    _init_content(File.join(dir,'image'))
 
-      config.map do |x|
-        oval :top => x[1][0],:left => x[1][1],:width => 5,:height => 5
-      end
+    config.map do |x|
+      oval :top => x[1][0],:left => x[1][1],:width => 5,:height => 5
+    end
   end
 
   protected
