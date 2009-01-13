@@ -70,29 +70,33 @@ class PhaseDiagram < Shoes
   end
 
   def ele_sub
-    table = Table('element.csv')
+    #FIXME REMOVE
+    config = YAML.load_file('config')
 
-    @n,@t = [],[]
+    table = File.exist?('element.csv') ? Table('element.csv') : []
 
-    table.column_names.each_with_index do |item,index|
-      @n[index] = edit_line :text => item, :width => 80,:height => 30,:state => 'disabled'
+    n,t,d = [],[],[]
+
+    config.keys.each_with_index do |x,y|
+      edit_line '', :width => 200,:state => 'disabled' if y == 0
+      n[y] = edit_line :text => x, :width => 200,:state => 'disabled'
     end
 
-    @d=[]
-    table.size.times do |x|
-      @t[x]=[]
-      @d[x] = flow do
-        table.column_names.size.times do |y|
-          @t[x][y] = edit_line table[x][y], :width => 80
+    20.times do |x|
+      t[x]=[]
+      d[x] = flow do
+        (config.keys.size + 1).times do |y|
+          t[x][y] = edit_line table[x] ? table[x][y] : '' , :width => 200
         end
-        button "delete" do @d[x].remove && @t[x]=[] end
+        button "delete" do d[x].remove && t[x]=[] end
       end
     end
 
-    button "保存" do
+    para "\n"*2
+    button "保存",:width => 100 do
       File.open('element.csv','w+') do |x|
-        x << @n.map(&:text).join(',') + "\n"
-        @t.map do |y|
+        x << ',' + n.map(&:text).join(',') + "\n"
+        t.map do |y|
           x << y.map(&:text).join(',') + "\n" unless y.empty?
         end
       end
@@ -103,8 +107,21 @@ class PhaseDiagram < Shoes
     @current_item = args
     dir = File.join( CONFIG_PATH , args )
     Dir.chdir(dir)
-    _init_items
-    _init_content(File.join(dir,'image'))
+
+      config = YAML.load_file('config')
+      table = File.exist?('element.csv') ? Table('element.csv') : []
+
+      t = config.keys.concat(table.column(table.column_names[0]))
+      @it = []
+
+      @items.clear do
+        t.size.times do |x|
+          para t[x],:left => 10
+          @it[x] = edit_line :width => 100,:left => 80
+        end
+      end
+
+      _init_content(File.join(dir,'image'))
   end
 
   protected
@@ -116,7 +133,7 @@ class PhaseDiagram < Shoes
 
   def _init_items(&block)
     @items ? @items.clear(block) :
-      @items = flow(:height => 300,:width => 200)
+      @items = flow(:height => 400,:width => 200)
   end
 
   def _init_content(path = '')
