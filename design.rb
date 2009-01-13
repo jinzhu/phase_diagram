@@ -82,7 +82,7 @@ class PhaseDiagram < Shoes
       n[y] = edit_line :text => x, :width => 200,:state => 'disabled'
     end
 
-    20.times do |x|
+    table.size.times do |x|
       t[x]=[]
       d[x] = flow do
         (config.keys.size + 1).times do |y|
@@ -118,8 +118,9 @@ class PhaseDiagram < Shoes
 
       @items.clear do
         t.size.times do |x|
+          para "\n",:height => 10
           para t[x],:left => 10
-          @it[x] = edit_line :width => 100,:left => 80
+          @it[x] = edit_line :width => 100,:left => 100
         end
       end
 
