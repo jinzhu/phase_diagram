@@ -13,7 +13,8 @@ Shoes.app :width => 1000,:height => 800,:title => '相图分析' do
   Dir.mkdir(CONFIG_PATH) unless File.exist?(CONFIG_PATH)
   Dir.chdir(CONFIG_PATH)
 
-  sidebar
-  $content = content(:path => '/pillar/HOME/Pictures/pict')
-  panel
+  $app = self
+  $sidebar = sidebar
+  $content = content#(:path => '/pillar/HOME/Pictures/pict')
+  $panel   = panel
 end
