@@ -1,10 +1,20 @@
 class Shoes::Content < Shoes::Widget
   def initialize(opt={}, &block)
-    @image = image(opt[:path] || '' ,:weight => 600,:height => 600,:top => 0,:left => 200)
   end
 
   def image=(args)
-    @image.path = args
+    @content.clear if @content
+    return @image.path = args if @image
+    @image = image(args,:weight => 600,:height => 600,:top => 0,:left => 200)
+  end
+
+  def content(&block)
+    @image.path = '' if @image
+    @content.clear if @content
+
+    @content = flow(:top => 0,:left => 200,:height => 600) do
+      yield
+    end
   end
 end
 
