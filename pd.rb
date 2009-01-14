@@ -13,8 +13,8 @@ class Pd
     # 更换图片
     $content.image = File.join(@path,'image')
     # 画出三个顶点
-    @config.map do |x|
-      $content.draw_oval(x[1][0],x[1][1])
+    @config.each_with_index do |x,index|
+      $app.draw_oval(:num => index,:top => x[1][0],:left => x[1][1])
     end
     show_sidebar
   end

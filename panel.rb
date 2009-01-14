@@ -1,3 +1,5 @@
+#! /usr/local/bin/shoes design.rb
+
 CONFIG_PATH = "#{ENV['HOME']}/.phase_diagram"
 
 class Shoes::Panel < Shoes::Widget
@@ -62,17 +64,16 @@ class Shoes::Panel < Shoes::Widget
           $content.image=(@file)
         end
 
+        @text = []
         para "相图主要成分及对应点:",:margin_top => 20
         3.times do |x|
-          eval <<-RUBY
-           @text#{x} = edit_line(:width => 200 )
+           @text[x] = edit_line(:width => 200 )
 
            button('位置',:width => 200) do
              click do |_z,_x,_y|
-               @e#{x} ? @e#{x}.move(_x,_y) : (@e#{x}=$content.draw_oval(_x,_y))
+               $app.draw_oval(:num => x,:left => _x,:top => _y)
              end
            end
-          RUBY
         end
 
         button "保存",:width => 200,:margin_top => 20 do
@@ -83,8 +84,10 @@ class Shoes::Panel < Shoes::Widget
           Dir.chdir(dir)
 
           element = {}
-          3.times do |x|
-            eval "element.merge!(@text#{x}.text => [@e#{x}.top,@e#{x}.left])"
+          $oval_num.size.times do |x|
+            top  = $oval_num[x].top - $oval_num[x].height/2
+            left = $oval_num[x].left - $oval_num[x].width/2
+            element.merge!(@text[x].text => [top,left])
           end
 
           # Save Configure
