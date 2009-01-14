@@ -152,4 +152,59 @@ class Pd
       end
     end
   end
+
+  def self.add
+    $content.content()
+
+    $sidebar.content do
+      $app.stack do
+        $app.para "名称:"
+        name = $app.edit_line :width => 200
+
+        $app.button '添加相图图片',:width => 200,:margin_top => 20 do
+          @file = $app.ask_open_file
+          $content.image=(@file)
+        end
+
+        @text = []
+        $app.para "相图主要成分及对应点:",:margin_top => 20
+        3.times do |x|
+           @text[x] = $app.edit_line(:width => 200 )
+
+           $app.button('位置',:width => 200) do
+             $app.click do |_z,_x,_y|
+               $app.draw_oval(:num => x,:left => _x,:top => _y)
+             end
+           end
+        end
+
+        $app.button "保存",:width => 200,:margin_top => 20 do
+          # Ensure Directory
+          dir = File.join(CONFIG_PATH,name.text)
+          # FIXME handel when exist
+          Dir.mkdir(dir) unless File.exist?(dir)
+          Dir.chdir(dir)
+
+          element = {}
+          $oval_num.size.times do |x|
+            top  = $oval_num[x].top + $oval_num[x].height/2
+            left = $oval_num[x].left + $oval_num[x].width/2
+            element.merge!(@text[x].text => [top,left])
+          end
+
+          # Save Configure
+          File.open('config','w+') do |x|
+            x.syswrite(element.to_yaml)
+          end
+
+          # Copy Image
+          FileUtils.copy(@file,'image') if @file
+
+          # refresh
+          $panel.init_select
+        end
+      end
+    end
+  end
 end
+#FIXME rename fail

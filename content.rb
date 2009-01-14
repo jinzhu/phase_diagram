@@ -1,3 +1,5 @@
+#! /usr/local/bin/shoes design.rb
+
 class Shoes::Content < Shoes::Widget
   attr :oval_num
 
@@ -18,6 +20,6 @@ class Shoes::Content < Shoes::Widget
   def clear_all
     @image.path = '' if @image
     @content.clear if @content
-    $oval_num.map {|x| x.remove } if $oval_num
+    $oval_num.map {|x| x.remove } && $oval_num = [] if $oval_num
   end
 end

@@ -6,7 +6,7 @@ class Shoes::Panel < Shoes::Widget
 
   def initialize(&block)
     button "新建" ,:width => 200,:top => 650 do
-      new && init_operate && init_select
+      Pd.add && init_operate && init_select
     end
     init_operate && init_select
   end
@@ -28,6 +28,7 @@ class Shoes::Panel < Shoes::Widget
           $current_item.show_element
         when "删除" then
           if confirm("确定删除?")
+            #FIXME Add to pd file
             FileUtils.rm_rf($current_item.path)
             init_select
           end
@@ -52,58 +53,5 @@ class Shoes::Panel < Shoes::Widget
   def show(args)
     $current_item = Pd.new(args)
     $current_item.show
-  end
-
-  def new
-    $content.content()
-    $sidebar.content do
-      stack do
-        para "名称:"
-        name = edit_line :width => 200
-
-        button '添加相图图片',:width => 200,:margin_top => 20 do
-          @file = ask_open_file
-          $content.image=(@file)
-        end
-
-        @text = []
-        para "相图主要成分及对应点:",:margin_top => 20
-        3.times do |x|
-           @text[x] = edit_line(:width => 200 )
-
-           button('位置',:width => 200) do
-             click do |_z,_x,_y|
-               $app.draw_oval(:num => x,:left => _x,:top => _y)
-             end
-           end
-        end
-
-        button "保存",:width => 200,:margin_top => 20 do
-          # Ensure Directory
-          dir = File.join(CONFIG_PATH,name.text)
-          # FIXME handel when exist
-          Dir.mkdir(dir) unless File.exist?(dir)
-          Dir.chdir(dir)
-
-          element = {}
-          $oval_num.size.times do |x|
-            top  = $oval_num[x].top + $oval_num[x].height/2
-            left = $oval_num[x].left + $oval_num[x].width/2
-            element.merge!(@text[x].text => [top,left])
-          end
-
-          # Save Configure
-          File.open('config','w+') do |x|
-            x.syswrite(element.to_yaml)
-          end
-
-          # Copy Image
-          FileUtils.copy(@file,'image') if @file
-
-          # refresh
-          init_select
-        end
-      end
-    end
   end
 end
