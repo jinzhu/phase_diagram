@@ -6,7 +6,7 @@ class Shoes::Panel < Shoes::Widget
 
   def initialize(&block)
     button "新建" ,:width => 200,:top => 650 do
-      Pd.add && init_operate && init_select
+      Pd.add && init_operate
     end
     init_operate && init_select
   end
@@ -27,12 +27,10 @@ class Shoes::Panel < Shoes::Widget
         when "元素转换表" then
           $current_item.show_element
         when "删除" then
-          if confirm("确定删除?")
-            #FIXME Add to pd file
-            FileUtils.rm_rf($current_item.path)
-            init_select
-          end
+          $current_item.destory
         end
+
+        init_operate
       end
     end
   end

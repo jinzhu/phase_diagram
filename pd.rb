@@ -12,6 +12,10 @@ class Pd
     @elements  = @config.keys
   end
 
+  def destory
+    FileUtils.rm_rf(@path) && $panel.init_select if confirm("确定删除?")
+  end
+
   def show
     # 更换图片
     $content.image = File.join(@path,'image')
