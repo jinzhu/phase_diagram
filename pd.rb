@@ -30,11 +30,11 @@ class Pd
     $sidebar.content do
       t = @elements + @table.column(@table.column_names[0])
 
+      #FIXME 计算
       @it = []
       t.size.times do |x|
-        $app.para "\n"
         $app.para $app.strong(t[x]) ,:stroke => "#f00"
-        @it[x] = $app.edit_line :width => 100,:left => 100
+        @it[x] = $app.edit_line :width => 200
       end
     end
   end
@@ -110,105 +110,67 @@ class Pd
       $app.draw_oval(:num => index,:top => x[1][0],:left => x[1][1])
     end
 
-    $sidebar.content do
-      $app.stack do
-        $app.para "名称:"
-        name = $app.edit_line @name,:width => 200
+    self.class.sidebar(@name,@config.keys)
 
-        $app.button '添加相图图片',:width => 200,:margin_top => 20 do
-          @file = $app.ask_open_file
-          $content.image=(@file)
-        end
-
-        @text = []
-        $app.para "相图主要成分及对应点:",:margin_top => 20
-        @config.each_with_index do |obj,index|
-          @text[index] = $app.edit_line(obj[0],:width => 200 )
-
-          $app.button('位置',:width => 200) do
-            $app.click do |_z,_x,_y|
-              $app.draw_oval(:num => index,:left => _x,:top => _y)
-            end
-          end
-        end
-
-        $app.button "保存",:width => 200,:margin_top => 20 do
-          Dir.chdir(@path)
-
-          element = {}
-          $oval_num.size.times do |x|
-            top  = $oval_num[x].top  + $oval_num[x].height/2
-            left = $oval_num[x].left + $oval_num[x].width/2
-            element.merge!(@text[x].text => [top,left])
-          end
-
-          # Save Configure
-          File.open(File.join(@path,'config'),'w+') do |x|
-            x.syswrite(element.to_yaml)
-          end
-
-          # Copy Image
-          FileUtils.copy(@file,'image') if @file
-
-          @config    = YAML.load_file(File.join( @path ,'config'))
-          @elements  = @config.keys
-        end
-      end
-    end
+    @path      = Dir.pwd
+    @config    = YAML.load_file(File.join(@path,'config'))
+    @elements  = @config.keys
   end
 
   def self.add
-    $content.content()
+    $content.content
+    sidebar
+  end
 
+  def self.sidebar(oldname='',keys=false)
     $sidebar.content do
-      $app.stack do
-        $app.para "名称:"
-        name = $app.edit_line :width => 200
+      $app.para "名称:"
+      name = $app.edit_line oldname,:width => 200
 
-        $app.button '添加相图图片',:width => 200,:margin_top => 20 do
-          @file = $app.ask_open_file
-          $content.image=(@file)
-        end
+      $app.button '添加相图图片',:width => 200,:margin_top => 20 do
+        @file = $app.ask_open_file
+        $content.image=(@file)
+      end
 
-        @text = []
-        $app.para "相图主要成分及对应点:",:margin_top => 20
-        3.times do |x|
-           @text[x] = $app.edit_line(:width => 200 )
+      @text = []
+      $app.para "相图主要成分及对应点:",:margin_top => 20
+      3.times do |x|
+        @text[x] = $app.edit_line(keys ? keys[x]:'',:width => 200 )
 
-           $app.button('位置',:width => 200) do
-             $app.click do |_z,_x,_y|
-               $app.draw_oval(:num => x,:left => _x,:top => _y)
-             end
-           end
-        end
-
-        $app.button "保存",:width => 200,:margin_top => 20 do
-          # Ensure Directory
-          dir = File.join(CONFIG_PATH,name.text)
-          # FIXME handel when exist
-          Dir.mkdir(dir) unless File.exist?(dir)
-          Dir.chdir(dir)
-
-          element = {}
-          $oval_num.size.times do |x|
-            top  = $oval_num[x].top + $oval_num[x].height/2
-            left = $oval_num[x].left + $oval_num[x].width/2
-            element.merge!(@text[x].text => [top,left])
+        $app.button('位置',:width => 200) do
+          $app.click do |_z,_x,_y|
+            $app.draw_oval(:num => x,:left => _x,:top => _y)
           end
-
-          # Save Configure
-          File.open('config','w+') do |x|
-            x.syswrite(element.to_yaml)
-          end
-
-          # Copy Image
-          FileUtils.copy(@file,'image') if @file
-
-          # refresh
-          $panel.init_select
         end
+      end
+
+      $app.button "保存",:width => 200,:margin_top => 20 do
+
+        # 如果存在已经存在此目录，并且此目录不是修改的原目录,则警告
+        # 如果修改更换名称则移动目录,新建则新建目录
+        dir     = File.join(CONFIG_PATH,name.text)
+        olddir = File.join(CONFIG_PATH,oldname) if oldname
+
+        return alert("已经存在该名称") if File.exist?(dir) && dir != olddir
+        oldname ? (FileUtils.mv(olddir,dir) if dir != olddir) : Dir.mkdir(dir)
+        Dir.chdir(dir)
+
+        # 保存元素的位置
+        element = {}
+        $oval_num.size.times do |x|
+          top  = $oval_num[x].top  + $oval_num[x].height/2
+          left = $oval_num[x].left + $oval_num[x].width/2
+          element.merge!(@text[x].text => [top,left])
+        end
+
+        # 保存配置文件
+        File.open(File.join(dir,'config'),'w+') do |x|
+          x.syswrite(element.to_yaml)
+        end
+
+        # 如果新增图片或者更换则复制
+        FileUtils.copy(@file,'image') if @file
       end
     end
   end
 end
-#FIXME rename fail

@@ -17,7 +17,7 @@ Shoes.app :width => 1000,:height => 800,:title => '相图分析' do
 
   $app      = self
   $sidebar  = sidebar
-  $content  = content#(:path = > '/pillar/HOME/Pictures/pict')
+  $content  = content
   $panel    = panel
   $oval_num = []
 
