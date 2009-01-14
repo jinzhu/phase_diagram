@@ -22,6 +22,8 @@ class Shoes::Panel < Shoes::Widget
         case x.text
         when "相图" then
           $current_item.show
+        when "修改相图" then
+          $current_item.edit
         when "元素转换表" then
           $current_item.show_element
         when "删除" then
@@ -85,8 +87,8 @@ class Shoes::Panel < Shoes::Widget
 
           element = {}
           $oval_num.size.times do |x|
-            top  = $oval_num[x].top - $oval_num[x].height/2
-            left = $oval_num[x].left - $oval_num[x].width/2
+            top  = $oval_num[x].top + $oval_num[x].height/2
+            left = $oval_num[x].left + $oval_num[x].width/2
             element.merge!(@text[x].text => [top,left])
           end
 
