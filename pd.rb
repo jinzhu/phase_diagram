@@ -43,60 +43,46 @@ class Pd
     end
   end
 
+  def add_row(args)
+    return $app.flow do
+      args.each { |x| $app.edit_line  x, :width => 150 }
+      $app.button "删除",:width => 100 do |x| x.parent.remove end
+    end
+  end
+
   def show_element
     show_sidebar
+    size = @config.keys.size
 
     $content.content do
       # 表格标题
-      @config.keys.each_with_index do |x,y|
-        $app.edit_line '摩尔替换率', :width => 150,:state => 'disabled' if y == 0
+      $app.edit_line '摩尔替换率', :width => 150,:state => 'disabled'
+      @config.keys.map do |x|
         $app.edit_line :text => x, :width => 150,:state => 'disabled'
       end
 
-      # 表格内容，最后加入删除按钮,删除需要删除行内容，以及该行
-      t,d = [],[]
-      items = $content.flow do
-        @table.size.times do |x|
-          t[x]=[]
-          d[x] = $content.flow do
-            (@config.keys.size + 1).times do |y|
-              t[x][y] = $content.edit_line  @table[x][y], :width => 150
-            end
-            $content.button "删除",:width => 100 do d[x].remove && t[x]=[] end
-          end
+      items = $content.flow
+
+      # 表格内容,添加预定义成分表
+      @table.map {|x| items.append { add_row(x) }}
+
+      # 空白行，用来向表单中添加内容
+      $app.flow do
+        (size+1).times{ |y| $app.edit_line :width => 150 }
+
+        $app.button "添加",:width => 100 do |x|
+          arg = x.parent.children[0..3]
+          items.append {add_row(arg.map(&:text))}
+          arg.map {|x| x.text = ''}
         end
       end
-      $app.para "\n"
-
-      # 空白一行，用来向表单中添加内容
-      tt    = []
-      (@config.keys.size + 1).times do |y|
-        tt[y] = $content.edit_line '' , :width => 150
-      end
-
-      $content.button "添加",:width => 100 do
-        items.append do
-          size = t.size
-          t[size] = []
-          d[size] = $content.flow do
-            (@config.keys.size + 1).times do |x|
-              t[size][x] = $content.edit_line tt[x].text, :width => 150
-            end
-
-            $content.button "删除",:width => 100 do
-              d[size].remove && t[t.size]=[]
-            end
-          end
-        end
-      end
-      $content.para "\n"*2
 
       # 保存内容为 csv 文件
       $content.button "保存",:width => 100 do
-        File.open(File.join(@path,'element.csv'),'w+') do |x|
-          x << ',' + @config.keys.join(',') + "\n"
-          t.map do |y|
-            x << y.map(&:text).join(',') + "\n" unless y.empty?
+        File.open(File.join(@path,'element.csv'),'w+') do |f|
+          f << ',' + @config.keys.join(',') + "\n"
+          items.children.map do |x|
+            f << x.children[0..3].map(&:text).join(',') + "\n"
           end
         end
         # 更新边
