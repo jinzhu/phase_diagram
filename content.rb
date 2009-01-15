@@ -10,7 +10,6 @@ class Shoes::Content < Shoes::Widget
 
   def content(&block)
     clear_all
-
     @content = flow(:top => 0,:left => 200,:height => 600) do
       yield if block
     end

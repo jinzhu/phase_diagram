@@ -127,9 +127,10 @@ class Pd
       $app.para "名称:"
       name = $app.edit_line oldname,:width => 200
 
+      #FIXME 原来的相图更换后因为缓存不能刷新
       $app.button '添加相图图片',:width => 200,:margin_top => 20 do
-        @file = $app.ask_open_file
-        $content.image=(@file)
+        @file          = $app.ask_open_file
+        $content.image = @file
       end
 
       @text = []
@@ -146,39 +147,48 @@ class Pd
 
       $app.button "保存",:width => 200,:margin_top => 20 do
 
-        # 如果存在已经存在此目录，并且此目录不是修改的原目录,则警告
-        # 如果修改更换名称则移动目录,新建则新建目录
         dir    = File.join($config_path,name.text)
         olddir = File.join($config_path,oldname) if oldname
 
-        (alert("已经存在该名称") && next) if File.exist?(dir) && dir != olddir
-        if oldname.empty?
-          # 如果为新建,新建后 olddir等于dir,可以继续更新
-          FileUtils.mkdir_p(dir) && olddir = dir
+        # 错误检查,提供的成分定位点少于成分数量, 名字为空, 成分名称为空，名称已经存在并且不是正在修改相图
+        if $oval_num.size < @text.size || name.text.empty? || @text.select{|x| x.text.empty?}.size > 0 || ( File.exist?(dir) && dir != olddir )
+
+          if File.exist?(dir) && dir != olddir
+            alert("已经存在该名称")
+          else
+            alert("请提供正确的名称，成分及成分定位点")
+          end
+
         else
-          (FileUtils.mv(olddir,dir) if dir != olddir) && olddir = dir
+          if oldname.empty?
+            # 如果为新建,新建后 olddir等于dir,可以继续更新
+            FileUtils.mkdir_p(dir) && olddir = dir
+          else
+            # 如果修改更换名称则移动目录,修改olddir,以继续更新
+            (FileUtils.mv(olddir,dir) if dir != olddir) && olddir = dir
+          end
+
+          Dir.chdir(dir)
+
+          # 保存元素的位置
+          element = {}
+          $oval_num.size.times do |x|
+            top  = $oval_num[x].top  + $oval_num[x].height/2
+            left = $oval_num[x].left + $oval_num[x].width/2
+            element.merge!(@text[x].text => [top,left])
+          end
+
+          # 保存配置文件
+          File.open(File.join(dir,'config'),'w+') do |x|
+            x.syswrite(element.to_yaml)
+          end
+
+          # 如果新增图片或者更换则复制
+          FileUtils.copy(@file,'image') if @file
+
+          # 新建、更换名称时刷新
+          $panel.init_select unless oldname == name.text
         end
-
-        Dir.chdir(dir)
-
-        # 保存元素的位置
-        element = {}
-        $oval_num.size.times do |x|
-          top  = $oval_num[x].top  + $oval_num[x].height/2
-          left = $oval_num[x].left + $oval_num[x].width/2
-          element.merge!(@text[x].text => [top,left])
-        end
-
-        # 保存配置文件
-        File.open(File.join(dir,'config'),'w+') do |x|
-          x.syswrite(element.to_yaml)
-        end
-
-        # 如果新增图片或者更换则复制
-        FileUtils.copy(@file,'image') if @file
-
-        # 新建、更换名称时刷新
-        $panel.init_select unless oldname == name.text
       end
     end
   end
