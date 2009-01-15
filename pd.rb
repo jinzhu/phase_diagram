@@ -43,13 +43,6 @@ class Pd
     end
   end
 
-  def add_row(args)
-    return $app.flow do
-      args.each { |x| $app.edit_line  x, :width => 150 }
-      $app.button "删除",:width => 100 do |x| x.parent.remove end
-    end
-  end
-
   def show_element
     show_sidebar
     size = @config.keys.size
@@ -176,6 +169,13 @@ class Pd
           $panel.init_select unless oldname == name.text
         end
       end
+    end
+  end
+
+  def add_row(args)
+    return $app.flow do
+      args.each { |x| $app.edit_line  x, :width => 150 }
+      $app.button "删除",:width => 100 do |x| x.parent.remove end
     end
   end
 end

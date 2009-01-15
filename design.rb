@@ -16,12 +16,6 @@ Shoes.app :width => 1000,:height => 800,:title => '相图分析' do
   Dir.mkdir($config_path) unless File.exist?($config_path)
   Dir.chdir($config_path)
 
-  $app      = self
-  $sidebar  = sidebar
-  $content  = content
-  $panel    = panel
-  $oval_num = []
-
   def draw_oval(opt = {})
     num  = opt[:num]
     left = opt[:left] || mouse[1]
@@ -30,4 +24,10 @@ Shoes.app :width => 1000,:height => 800,:title => '相图分析' do
     $oval_num[num] ? $oval_num[num].move(left,top) :
       $oval_num[num] = (oval :left => left,:top => top,:height => 50,:width => 50,:center => true,:fill => red)
   end
+
+  $app      = self
+  $sidebar  = sidebar
+  $content  = content
+  $panel    = panel
+  $oval_num = []
 end
