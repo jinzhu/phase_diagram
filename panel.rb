@@ -1,6 +1,6 @@
 #! /usr/local/bin/shoes design.rb
 
-CONFIG_PATH = "#{ENV['HOME']}/.phase_diagram"
+CONFIG_PATH = File.join(ENV['HOME'],".phase_diagram")
 
 class Shoes::Panel < Shoes::Widget
 
