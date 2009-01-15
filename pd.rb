@@ -6,10 +6,9 @@ class Pd
   def initialize(args)
     @name      = args
     @path      = File.join( CONFIG_PATH , args )
-    @config    = YAML.load_file(File.join( @path ,'config'))
     Dir.chdir(@path)
     @table     = File.exist?('element.csv') ? Table('element.csv') : Table('')
-    @elements  = @config.keys
+    @config    = YAML.load_file(File.join( @path ,'config'))
   end
 
   def destory
@@ -17,18 +16,23 @@ class Pd
   end
 
   def show
+    show_sidebar
+
     # 更换图片
     $content.image = File.join(@path,'image')
     # 画出三个顶点
     @config.each_with_index do |x,index|
       $app.draw_oval(:num => index,:top => x[1][0],:left => x[1][1])
     end
-    show_sidebar
   end
 
   def show_sidebar
+    # 修改后刷新配置文件
+    @path   = Dir.pwd
+    @config = YAML.load_file(File.join(@path,'config'))
+
     $sidebar.content do
-      t = @elements + @table.column(@table.column_names[0])
+      t = @config.keys + @table.column(@table.column_names[0])
 
       #FIXME 计算
       @it = []
@@ -111,10 +115,6 @@ class Pd
     end
 
     self.class.sidebar(@name,@config.keys)
-
-    @path      = Dir.pwd
-    @config    = YAML.load_file(File.join(@path,'config'))
-    @elements  = @config.keys
   end
 
   def self.add
