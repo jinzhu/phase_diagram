@@ -12,8 +12,9 @@ $LOAD_PATH <<  File.dirname(__FILE__)
 Shoes.app :width => 1000,:height => 800,:title => '相图分析' do
   # background '#aaa'..'#ddd',:angle => 90
   # CONFIG_PATH = "#{ENV['HOME']}/.phase_diagram"
-  Dir.mkdir(CONFIG_PATH) unless File.exist?(CONFIG_PATH)
-  Dir.chdir(CONFIG_PATH)
+  $config_path = File.join(ENV['HOME'],".phase_diagram")
+  Dir.mkdir($config_path) unless File.exist?($config_path)
+  Dir.chdir($config_path)
 
   $app      = self
   $sidebar  = sidebar

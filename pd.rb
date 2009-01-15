@@ -5,7 +5,7 @@ class Pd
 
   def initialize(args)
     @name      = args
-    @path      = File.join( CONFIG_PATH , args )
+    @path      = File.join( $config_path , args )
     Dir.chdir(@path)
     @table     = File.exist?('element.csv') ? Table('element.csv') : Table('')
     @config    = YAML.load_file(File.join( @path ,'config'))
@@ -148,11 +148,17 @@ class Pd
 
         # 如果存在已经存在此目录，并且此目录不是修改的原目录,则警告
         # 如果修改更换名称则移动目录,新建则新建目录
-        dir     = File.join(CONFIG_PATH,name.text)
-        olddir = File.join(CONFIG_PATH,oldname) if oldname
+        dir    = File.join($config_path,name.text)
+        olddir = File.join($config_path,oldname) if oldname
 
-        return alert("已经存在该名称") if File.exist?(dir) && dir != olddir
-        oldname ? (FileUtils.mv(olddir,dir) if dir != olddir) : Dir.mkdir(dir)
+        (alert("已经存在该名称") && next) if File.exist?(dir) && dir != olddir
+        if oldname.empty?
+          # 如果为新建,新建后 olddir等于dir,可以继续更新
+          FileUtils.mkdir_p(dir) && olddir = dir
+        else
+          (FileUtils.mv(olddir,dir) if dir != olddir) && olddir = dir
+        end
+
         Dir.chdir(dir)
 
         # 保存元素的位置
@@ -170,6 +176,9 @@ class Pd
 
         # 如果新增图片或者更换则复制
         FileUtils.copy(@file,'image') if @file
+
+        # 新建、更换名称时刷新
+        $panel.init_select unless oldname == name.text
       end
     end
   end

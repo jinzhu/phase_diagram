@@ -4,8 +4,7 @@ class Shoes::Content < Shoes::Widget
   attr :oval_num
 
   def image=(args)
-    @content.clear if @content
-    return @image.path = args if @image
+    clear_all
     @image = image(args,:weight => 600,:height => 600,:top => 0,:left => 200)
   end
 
@@ -18,7 +17,8 @@ class Shoes::Content < Shoes::Widget
   end
 
   def clear_all
-    @image.path = '' if @image
+    $app.click
+    @image.remove if @image
     @content.clear if @content
     $oval_num.map {|x| x.remove } && $oval_num = [] if $oval_num
   end

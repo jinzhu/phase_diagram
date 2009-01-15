@@ -1,7 +1,5 @@
 #! /usr/local/bin/shoes design.rb
 
-CONFIG_PATH = File.join(ENV['HOME'],".phase_diagram")
-
 class Shoes::Panel < Shoes::Widget
 
   def initialize(&block)
@@ -38,7 +36,7 @@ class Shoes::Panel < Shoes::Widget
   def init_select
     @selected.clear if @selected
 
-    items = Dir.entries(CONFIG_PATH).reject{|x| x =~ /\.+/}
+    items = Dir.entries($config_path).reject{|x| x =~ /\.+/}
 
     @selected = flow :top => 650,:left => 540 do
       para "选择相图"
