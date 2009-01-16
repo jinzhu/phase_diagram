@@ -74,10 +74,52 @@ class Pd
     # 更换图片
     $content.image = File.join(@path,'image')
 
+    # 实时显示主要成分的在相图中所含的百分比
+    $rt = $app.animate(1) do
+      get_p($app.mouse[1, 2])
+    end
+
     # 画出三个顶点
     @config.each_with_index do |x,index|
       $app.draw_oval(:num => index,:left => x[1][0],:top => x[1][1])
     end
+  end
+
+  def get_p(args)
+    #               -- 0
+    #              -  -
+    #             -    -
+    #            -      -
+    #           -        -
+    #          -          -
+    #         -            -
+    #      1 ---------------- 2
+    p = @config.values
+
+    # 三角形三个边长的距离
+    l01 = Math.sqrt((p[0][0]-p[1][0])**2 + (p[0][1]-p[1][1])**2)
+    l12 = Math.sqrt((p[2][0]-p[1][0])**2 + (p[2][1]-p[1][1])**2)
+    l02 = Math.sqrt((p[2][0]-p[0][0])**2 + (p[2][1]-p[0][1])**2)
+
+    # 余弦定理，角 1 的余弦值
+    c_a_1 = (l01**2 + l12**2 - l02**2)/(2*l01*l12)
+    # 角 1 的正弦值
+    s_a_1 = Math.sqrt(1 - c_a_1**2)
+
+    # 以 0/2 为顶点的三角形的高
+    h0 = l01*s_a_1
+    h2 = l12*s_a_1
+
+    # 各边的斜率
+    k01 = Float(p[1][1]-p[0][1])/Float(p[1][0]-p[0][0])
+    k02 = Float(p[2][1]-p[0][1])/Float(p[2][0]-p[0][0])
+    k12 = Float(p[2][1]-p[1][1])/Float(p[2][0]-p[1][0])
+
+    ph0 = -((p[1][1] - k12*p[1][0])-(args[1] - k12*args[0]))*Math.cos(Math.atan(k12))/h0
+    ph2 = -((p[1][1] - k01*p[1][0])-(args[1] - k01*args[0]))*Math.cos(Math.atan(k01))/h2
+
+    @rt_p.remove if @rt_p # 实时百分比
+    @rt_p = $app.para @config.keys.join(" : ") + " = " + ph0.to_s + " : " + (1-ph2-ph0).to_s + " : " +ph2.to_s if (ph0 + ph2 <= 1.01) && ph0 > -0.01 && ph2 > -0.01
   end
 
   def show_sidebar

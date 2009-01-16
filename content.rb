@@ -21,5 +21,6 @@ class Shoes::Content < Shoes::Widget
     @content.clear if @content
     $oval_num.map {|x| x.remove } && $oval_num = [] if $oval_num
     $p_num.map {|x| x.remove } && $p_num = [] if $p_num
+    $rt.remove if $rt
   end
 end
