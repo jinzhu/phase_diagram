@@ -10,8 +10,8 @@ $LOAD_PATH <<  File.dirname(__FILE__)
 
 
 Shoes.app :width => 1000,:height => 800,:title => '相图分析' do
-  # background '#aaa'..'#ddd',:angle => 90
-  # CONFIG_PATH = "#{ENV['HOME']}/.phase_diagram"
+  background "#BBF".."#BB5", :angle => 0, :curve => 10
+
   $config_path = File.join(ENV['HOME'],".phase_diagram")
   Dir.mkdir($config_path) unless File.exist?($config_path)
   Dir.chdir($config_path)
@@ -37,7 +37,4 @@ Shoes.app :width => 1000,:height => 800,:title => '相图分析' do
   $content  = content
   $panel    = panel
   $oval_num = []
-
-  $current_item = Pd.new('k')
-  $current_item.show
 end

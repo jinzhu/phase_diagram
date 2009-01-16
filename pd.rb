@@ -68,7 +68,7 @@ class Pd
     $app.draw_p(:top => y,:left => x)
   end
 
-  def  show
+  def show
     show_sidebar
 
     # 更换图片
@@ -93,6 +93,7 @@ class Pd
         $app.edit_line :width => 200
       end
       $app.button "计算",:width => 100 do |x|
+        $p_num.map {|m| m.remove } && $p_num = [] if $p_num
         children = x.parent.children
         e = {}
         t.size.times do |y|
@@ -105,7 +106,7 @@ class Pd
         e.values.any?{|x| x>0} ? triangle(e) : alert("请先填写有效数据")
       end
       $app.button "清空",:width => 100 do |x|
-        $p_num.map {|x| x.remove } && $p_num = [] if $oval_num
+        t.size.times {|y| x.parent.children[2*y+1].text = ''}
       end
     end
   end

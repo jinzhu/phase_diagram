@@ -1,3 +1,4 @@
+#! /usr/local/bin/shoes design.rb
 class Shoes::Sidebar < Shoes::Widget
 
   def content(&block)
