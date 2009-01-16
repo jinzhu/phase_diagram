@@ -92,7 +92,7 @@ class Pd
         $app.para $app.strong(x) ,:stroke => "#f00"
         $app.edit_line :width => 200
       end
-      $app.button do |x|
+      $app.button "计算",:width => 100 do |x|
         children = x.parent.children
         e = {}
         t.size.times do |y|
@@ -103,6 +103,9 @@ class Pd
           end
         end
         e.values.any?{|x| x>0} ? triangle(e) : alert("请先填写有效数据")
+      end
+      $app.button "清空",:width => 100 do |x|
+        $p_num.map {|x| x.remove } && $p_num = [] if $oval_num
       end
     end
   end

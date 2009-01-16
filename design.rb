@@ -22,14 +22,14 @@ Shoes.app :width => 1000,:height => 800,:title => '相图分析' do
     top  = opt[:top]  || mouse[2]
 
     $oval_num[num] ? $oval_num[num].move(left,top) :
-      $oval_num[num] = (oval :left => left,:top => top,:height => 5,:width => 5,:center => true,:fill => red)
+      $oval_num[num] = (oval :left => left,:top => top,:height => 5,:width => 5,:center => true,:fill => "#fa0",:stroke => "#fa0")
   end
 
   def draw_p(opt = {})
     left = opt[:left] || mouse[1]
     top  = opt[:top]  || mouse[2]
-
-    oval :left => left,:top => top,:height => 15,:width => 15,:center => true,:fill => green
+    $p_num ||= []
+    $p_num[$p_num.size] = oval :left => left,:top => top,:height => 5,:width => 5,:center => true,:fill => "#f00",:stroke => "#f00"
   end
 
   $app      = self
@@ -40,5 +40,4 @@ Shoes.app :width => 1000,:height => 800,:title => '相图分析' do
 
   $current_item = Pd.new('k')
   $current_item.show
-  # oval :left => 500,:top => 500,:height => 15,:width => 15,:center => true,:fill => green
 end
