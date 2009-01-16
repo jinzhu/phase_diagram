@@ -15,14 +15,89 @@ class Pd
     FileUtils.rm_rf(@path) && $panel.init_select if confirm("确定删除?")
   end
 
-  def show
+  def triangle
+#                         -- A-0
+#                        -  -
+#                       -    -
+#                      -      -
+#                     -        -
+#                    -          -
+#                   -            -
+#              B-1 ---------------- C-2
+
+
+    p  = @config.values
+    k  = @config.keys
+    p0 = 0.5
+    p1 = 0
+    p2 = 1 - p0 - p1
+
+    l01 = Math.sqrt((p[0][0]-p[1][0])**2 + (p[0][1]-p[1][1])**2)
+    l12 = Math.sqrt((p[2][0]-p[1][0])**2 + (p[2][1]-p[1][1])**2)
+    l02 = Math.sqrt((p[2][0]-p[0][0])**2 + (p[2][1]-p[0][1])**2)
+    # 余弦定理，求出 角1 的余弦值
+    c_a_1 = (l01**2 + l12**2 - l02**2)/(2*l01*l12)
+    # 角1 的正弦值
+    s_a_1 = Math.sqrt(1 - c_a_1**2)
+    # 点 A/C 做对边角的高度
+    h0 = l01*s_a_1
+    h2 = l12*s_a_1
+
+    # A/C 所占面积的高
+    ph0 = h0*p0
+    ph2 = h2*p2
+
+
+#                         -- A-0
+#                        -  -
+#                       -    -
+#                      -      -
+#                     -        -
+#                    -          -
+#                   -            -
+#              B-1 ---------------- C-2
+
+    # 直线 AB / BC 的斜率,y 值全部取负
+    k01 = Float(p[1][1]-p[0][1])/Float(p[1][0]-p[0][0]) #A_C
+    # $app.line(0,c,1000.0,1000.0*k01+c)
+    k12 = Float(p[2][1]-p[1][1])/Float(p[2][0]-p[1][0]) #A_B
+    # $app.line(0,c,1000.0,1000.0*k12+c)
+
+
+    t2 = Float(p[0][1]-p[1][1])/Float(p[0][0]-p[1][0])
+    kk2= Math.cos(Math.atan(t2) - Math.acos(c_a_1))
+
+    c_a_2 = (l02**2 + l12**2 - l01**2)/(2*l02*l12)
+    t0 = Float(p[2][1]-p[1][1])/Float(p[2][0]-p[1][0])
+
+    puts k[0],k[1],k[2]
+    $app.line(p[2][0],p[2][1],p[1][0],p[1][1])
+
+    kk0= Math.cos(Math.atan(t0))
+    puts Math.acos(c_a_2)/Math::PI*180
+    puts Math.atan(t0)/Math::PI*180
+    
+    c2 = p[1][1] - k01*p[1][0] + ph2/kk2
+    c0 = p[1][1] - k12*p[1][0] + ph0/kk0
+
+    # $app.line(0,c2,1000.0,1000.0*k01+c2)
+    $app.line(0,c0,-1000.0,-1000.0*k12+c0)
+
+    # k01*x + c2 = k12*x + c0
+    x = (c0 - c2)/(k01-k12)
+    y = k01*x + c2
+    $app.draw_p(:top => y,:left => x)
+  end
+
+  def  show
     show_sidebar
 
     # 更换图片
     $content.image = File.join(@path,'image')
+    triangle
     # 画出三个顶点
     @config.each_with_index do |x,index|
-      $app.draw_oval(:num => index,:top => x[1][0],:left => x[1][1])
+      $app.draw_oval(:num => index,:left => x[1][0],:top => x[1][1])
     end
   end
 
@@ -90,7 +165,7 @@ class Pd
     $content.image = File.join(@path,'image')
 
     @config.each_with_index do |x,index|
-      $app.draw_oval(:num => index,:top => x[1][0],:left => x[1][1])
+      $app.draw_oval(:num => index,:left => x[1][0],:top => x[1][1])
     end
 
     self.class.sidebar(@name,@config.keys)
@@ -154,7 +229,7 @@ class Pd
           $oval_num.size.times do |x|
             top  = $oval_num[x].top  + $oval_num[x].height/2
             left = $oval_num[x].left + $oval_num[x].width/2
-            element.merge!(@text[x].text => [top,left])
+            element.merge!(@text[x].text => [left,top])
           end
 
           # 保存配置文件
