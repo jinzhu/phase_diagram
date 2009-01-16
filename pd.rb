@@ -16,8 +16,13 @@ class Pd
   end
 
   def triangle(opt={})
-    p = opt.keys    # 成分位置
+    c = opt.keys    # 成分位置
     k = opt.values  # 成分含量
+    sum = 0
+    k.map  {|x| Float( sum+=x )}  # 成分的总摩尔量
+    k.map! {|x| Float(  x/sum )}  # 成分占总成分的摩尔百分比
+    p = []
+    c.map { |x| p << @config[x] }
 
     #               -- 0
     #              -  -
@@ -83,11 +88,16 @@ class Pd
     $sidebar.content do
       t = @config.keys + @table.column(@table.column_names[0])
 
-      #FIXME 计算
-      @it = []
-      t.size.times do |x|
-        $app.para $app.strong(t[x]) ,:stroke => "#f00"
-        @it[x] = $app.edit_line :width => 200
+      t.map do |x|
+        $app.para $app.strong(x) ,:stroke => "#f00"
+        $app.edit_line :width => 200
+      end
+      $app.button do |x|
+        e = {}
+        t.size.times do |y|
+          e.merge!(t[y] => x.parent.children[y*2+1].text.to_f)
+        end
+        triangle(e)
       end
     end
   end
