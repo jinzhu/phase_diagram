@@ -86,20 +86,36 @@ class Pd
     @config = YAML.load_file(File.join(@path,'config'))
 
     $sidebar.content do
-      t = @config.keys + @table.column(@table.column_names[0])
+      t = @config.keys + @table.column(0)
 
       t.map do |x|
         $app.para $app.strong(x) ,:stroke => "#f00"
         $app.edit_line :width => 200
       end
       $app.button do |x|
+        children = x.parent.children
         e = {}
         t.size.times do |y|
-          e.merge!(t[y] => x.parent.children[y*2+1].text.to_f)
+          result = convert(children[2*y].text, children[2*y+1].text)
+          @config.keys.map do |k|
+            e[k] ||= 0
+            e[k] += ( result[k] || 0)
+          end
         end
         triangle(e)
       end
     end
+  end
+
+  def convert(name,num)
+    return {name => num.to_f} if @config.keys.include?(name)
+
+    result = {}
+    index = @table.column(0).index{|x| x == name}
+    @table.column_names.map do |x|
+      result[x] = @table.column(x)[index].to_f * num.to_f if index && x
+    end
+    return result
   end
 
   def show_element
