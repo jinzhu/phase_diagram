@@ -102,7 +102,7 @@ class Pd
             e[k] += ( result[k] || 0)
           end
         end
-        triangle(e)
+        e.values.any?{|x| x>0} ? triangle(e) : alert("请先填写有效数据")
       end
     end
   end
