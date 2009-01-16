@@ -28,7 +28,7 @@ class Pd
 
     p  = @config.values
     k  = @config.keys
-    p0 = 0.5
+    p0 = 0.8
     p1 = 0
     p2 = 1 - p0 - p1
 
@@ -65,7 +65,12 @@ class Pd
 
 
     t2 = Float(p[0][1]-p[1][1])/Float(p[0][0]-p[1][0])
-    kk2= Math.cos(Math.atan(t2) - Math.acos(c_a_1))
+    # kk2= Math.cos(Math.atan(t2) - Math.acos(c_a_1))
+    kk2  =  Math.cos(Math.atan(t2))
+
+    a = Math.atan(t2)
+    kk0= a < 0 ? Math.cos(a) : Math.cos(a- Math.acos(c_a_1))
+    # kk0  = Math.cos(Math.atan(t0) - Math.acos(c_a_2))
 
     c_a_2 = (l02**2 + l12**2 - l01**2)/(2*l02*l12)
     t0 = Float(p[2][1]-p[1][1])/Float(p[2][0]-p[1][0])
@@ -73,7 +78,10 @@ class Pd
     puts k[0],k[1],k[2]
     $app.line(p[2][0],p[2][1],p[1][0],p[1][1])
 
-    kk0= Math.cos(Math.atan(t0))
+    a = Math.atan(t0)
+    # kk0  = Math.cos(Math.atan(t0) - Math.acos(c_a_2))
+    kk0= a < 0 ? Math.cos(a) : Math.cos(Math.atan(t0) - Math.acos(c_a_2))
+
     puts Math.acos(c_a_2)/Math::PI*180
     puts Math.atan(t0)/Math::PI*180
     

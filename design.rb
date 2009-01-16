@@ -38,7 +38,7 @@ Shoes.app :width => 1000,:height => 800,:title => '相图分析' do
   $panel    = panel
   $oval_num = []
 
-  $current_item = Pd.new('A')
+  $current_item = Pd.new('k')
   $current_item.show
   # oval :left => 500,:top => 500,:height => 15,:width => 15,:center => true,:fill => green
 end
