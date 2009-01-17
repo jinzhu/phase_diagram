@@ -5,12 +5,12 @@ class Shoes::Content < Shoes::Widget
 
   def image=(args)
     clear_all
-    @image = image(args,:weight => 600,:height => 600,:top => 0,:left => 200)
+    @image = image(args,:weight => 600,:height => 600,:top => 0,:left => 220)
   end
 
   def content(&block)
     clear_all
-    @content = flow(:top => 0,:left => 200,:height => 600) do
+    @content = flow(:top => 0,:left => 220,:height => 600) do
       yield if block
     end
   end

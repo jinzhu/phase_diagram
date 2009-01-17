@@ -48,7 +48,7 @@ module Position
     # k01*x + c2 = k12*x + c0
     x = (c0 - c2)/(@k01-@k12)
     y = @k01*x + c2
-    $app.draw_p(:top => y,:left => x)
+    return x,y
   end
 
   def get_percent(args)

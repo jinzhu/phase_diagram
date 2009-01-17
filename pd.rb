@@ -23,7 +23,15 @@ class Pd
 
     # 更换图片
     $content.image = File.join(@path,'image')
-    @rt_p = $app.para :stroke => "#00F",:top => 600,:left => 200,:width => 900
+    @rt_p = $app.para :stroke => "#00F",:top => 600,:left => 220,:width => 900
+
+    $notice = $app.flow :top => 0,:left => 950 do
+      $app.button "清空",:width => 150 do
+        $p_num.map {|m| m.remove } && $p_num = [] if $p_num
+        $notice.children[1].clear
+      end
+      $app.flow :top => 50,:left => 0
+    end
 
     # 实时显示主要成分的在相图中所含的百分比
     $rt = $app.animate(1) do
@@ -49,17 +57,19 @@ class Pd
         $app.edit_line :width => 200
       end
       $app.button "计算",:width => 100 do |x|
-        $p_num.map {|m| m.remove } && $p_num = [] if $p_num
         children = x.parent.children
         e = {}
         t.size.times do |y|
-          result = convert(children[2*y].text, children[2*y+1].text)
-          @config.keys.map do |k|
-            e[k] ||= 0
-            e[k] += ( result[k] || 0)
-          end
+          e.merge!(children[2*y].text => children[2*y+1].text)
         end
-        e.values.any?{|x| x>0} ? triangle(e) : alert("请先填写有效数据")
+        result = convert(e.dup)
+
+        if result.values.any?{|x| x>0}
+          r = triangle(result)
+          $app.draw_p(:left => r[0],:top => r[1],:msg => e)
+        else
+          alert("请先填写有效数据")
+        end
       end
       $app.button "清空",:width => 100 do |x|
         t.size.times {|y| x.parent.children[2*y+1].text = ''}
@@ -67,13 +77,17 @@ class Pd
     end
   end
 
-  def convert(name,num)
-    return {name => num.to_f} if @config.keys.include?(name)
-
+  def convert(e)
     result = {}
-    index = @table.column(0).index{|x| x == name}
-    @table.column_names.map do |x|
-      result[x] = @table.column(x)[index].to_f * num.to_f if index && x
+    @config.keys.map do |x|
+      result[x] = e.delete(x).to_f
+    end
+
+    e.map do |k,v|
+      index = @table.column(0).index{|x| x == k}
+      @table.column_names.map do |x|
+        result[x] += @table.column(x)[index].to_f * v.to_f if index && x
+      end
     end
     return result
   end
