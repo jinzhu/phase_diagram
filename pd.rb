@@ -26,7 +26,7 @@ class Pd
     @rt_p = $app.para :stroke => "#00F",:top => 600,:left => 220,:width => 900
 
     $notice = $app.flow :top => 0,:left => 950 do
-      $app.button "清空",:width => 150 do
+      $app.button "清空全部",:width => 150 do
         $p_num.map {|m| m.remove } && $p_num = [] if $p_num
         $notice.children[1].clear
       end

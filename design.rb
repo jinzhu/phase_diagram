@@ -32,22 +32,23 @@ Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
     size = $p_num.size
     $p_num[size] = oval :left => left,:top => top,:height => 5,:width => 5,:center => true,:fill => "#f00",:stroke => "#f00"
 
+    # 边栏显示所有成分及含量,及删除此点
     $p_num[size].hover do
       $notice.children[1].clear do
         opt[:msg].map do |k,v|
           para strong(k),"\n",:stroke => red
           para " "*5, strong(v.empty? ? 0 : v)," 摩尔\n",:stroke => "#00F"
         end
+        $app.button "删除此点",:width => 150 do |x|
+          x.parent.clear && $p_num[size].remove
+        end
       end
     end
-   end
+  end
 
   $app      = self
   $sidebar  = sidebar
   $content  = content
   $panel    = panel
   $oval_num = []
-
-    $current_item = Pd.new('A')
-    $current_item.show
 end
