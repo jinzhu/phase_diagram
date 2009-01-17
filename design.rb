@@ -21,8 +21,8 @@ Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
     left = opt[:left] || mouse[1]
     top  = opt[:top]  || mouse[2]
 
-    $oval_num[num] ? $oval_num[num].move(left,top) :
-      $oval_num[num] = (oval :left => left,:top => top,:height => 5,:width => 5,:center => true,:fill => "#fa0",:stroke => "#fa0")
+    $oval_num[num].remove if $oval_num[num]
+    $oval_num[num] = (oval :left => left,:top => top,:height => 5,:width => 5,:center => true,:fill => "#fa0",:stroke => "#fa0")
   end
 
   def draw_p(opt = {})
@@ -35,12 +35,20 @@ Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
     # 边栏显示所有成分及含量,及删除此点
     $p_num[size].hover do
       $notice.children[1].clear do
-        opt[:msg].map do |k,v|
-          para strong(k),"\n",:stroke => red
-          para " "*5, strong(v.empty? ? 0 : v)," 摩尔\n",:stroke => "#00F"
-        end
-        $app.button "删除此点",:width => 150 do |x|
-          x.parent.clear && $p_num[size].remove
+        stack do
+          opt[:msg].map do |k,v|
+            stack :width => 200 do
+              background "#FFD900"
+              para strong(k),:stroke => red
+            end
+            stack :width => 200 do
+              para strong(v.empty? ? 0 : v),strong(" 摩尔"),:stroke => "#00F"
+            end
+          end
+
+          $app.button "删除此点",:width => 200,:left => -20 do |x|
+            x.parent.clear && $p_num[size].remove
+          end
         end
       end
     end

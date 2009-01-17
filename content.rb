@@ -16,11 +16,10 @@ class Shoes::Content < Shoes::Widget
   end
 
   def clear_all
-    $app.click
-    @image.remove if @image
-    @content.clear if @content
-    $oval_num.map {|x| x.remove } && $oval_num = [] if $oval_num
-    $p_num.map {|x| x.remove } && $p_num = [] if $p_num
-    $rt.remove if $rt
+    $app.click  # 清除单击
+
+    [$oval_num,@image,@content,$p_num,$rt,$notice].map do |x|
+      x.is_a?(Array) ? (x.map {|y| y.remove } && x = []) : (x.remove if x)
+    end
   end
 end

@@ -26,11 +26,11 @@ class Pd
     @rt_p = $app.para :stroke => "#00F",:top => 600,:left => 220,:width => 900
 
     $notice = $app.flow :top => 0,:left => 950 do
-      $app.button "清空全部",:width => 150 do
+      $app.button "清空全部",:width => 200 do
         $p_num.map {|m| m.remove } && $p_num = [] if $p_num
         $notice.children[1].clear
       end
-      $app.flow :top => 50,:left => 0
+      $app.flow
     end
 
     # 实时显示主要成分的在相图中所含的百分比
@@ -93,7 +93,6 @@ class Pd
   end
 
   def show_element
-    show_sidebar
     size = @config.keys.size
 
     $content.content do
@@ -132,6 +131,7 @@ class Pd
         show_sidebar
       end
     end
+    show_sidebar
   end
 
 
