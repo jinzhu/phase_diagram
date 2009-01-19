@@ -22,15 +22,17 @@ Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
     top  = opt[:top]  || mouse[2]
 
     $oval_num[num].remove if $oval_num[num]
-    $oval_num[num] = (oval :left => left,:top => top,:height => 5,:width => 5,:center => true,:fill => "#fa0",:stroke => "#fa0")
+    $oval_num[num] = (oval :left => left,:top => top,:height => 3,:width => 3,:center => true,:fill => "#fa0",:stroke => "#fa0")
   end
 
   def draw_p(opt = {})
     left = opt[:left] || mouse[1]
     top  = opt[:top]  || mouse[2]
+    return false  unless (left > 0 && top > 0)
+    # return false unless [left,top].all
     $p_num ||= []
     size = $p_num.size
-    $p_num[size] = oval :left => left,:top => top,:height => 5,:width => 5,:center => true,:fill => "#f00",:stroke => "#f00"
+    $p_num[size] = oval :left => left,:top => top,:height => 3,:width => 3,:center => true,:fill => "#f00",:stroke => "#f00"
 
     # 边栏显示所有成分及含量,及删除此点
     $p_num[size].hover do
@@ -42,7 +44,7 @@ Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
               para strong(k),:stroke => red
             end
             stack :width => 200 do
-              para strong(v.empty? ? 0 : v),strong(" 摩尔"),:stroke => "#00F"
+              para strong(v.to_s.empty? ? 0 : v),strong(" 摩尔"),:stroke => "#00F"
             end
           end
 
@@ -59,4 +61,6 @@ Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
   $content  = content
   $panel    = panel
   $oval_num = []
+    $current_item = Pd.new('k')
+    $current_item.show
 end

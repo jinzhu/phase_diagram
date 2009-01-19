@@ -62,19 +62,38 @@ class Pd
         t.size.times do |y|
           e.merge!(children[2*y].text => children[2*y+1].text)
         end
-        result = convert(e.dup)
 
-        if result.values.any?{|x| x>0}
-          r = triangle(result)
-          $app.draw_p(:left => r[0],:top => r[1],:msg => e)
-        else
-          alert("请先填写有效数据")
-        end
+         convert_hash(e).map do |ele|
+           r = triangle(convert(ele.dup))
+           $app.draw_p(:left => r[0],:top => r[1],:msg => ele)
+         end
       end
       $app.button "清空",:width => 100 do |x|
         t.size.times {|y| x.parent.children[2*y+1].text = ''}
       end
     end
+  end
+
+  def convert_hash(e)
+    e.map do |k,v|
+      if v.include?('..')
+        # 范围,因为eval性能及其它原因而不使用
+        tmp  = (v.split('..',2)[0].to_f .. v.split('..',2)[1].to_f)
+        e[k] = tmp.step(Float(tmp.end-tmp.begin)/10).to_a.concat([tmp.end]).uniq
+      else
+        e[k] = [v.to_f]
+      end
+    end
+
+    result = [e]
+    require 'pp'
+    e.size.times do |x|
+      result = result.inject([]) do |t,y|
+        t += y.values[x].inject([]){|s,z| s << y.dup.merge(e.keys[x]=>z)}
+      end
+    end
+        pp result
+    return result
   end
 
   def convert(e)
