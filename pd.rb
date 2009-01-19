@@ -56,6 +56,7 @@ class Pd
         $app.para $app.strong(x) ,:stroke => "#f00"
         $app.edit_line :width => 200
       end
+
       $app.button "计算",:width => 100 do |x|
         children = x.parent.children
         e = {}
@@ -86,13 +87,12 @@ class Pd
     end
 
     result = [e]
-    require 'pp'
     e.size.times do |x|
+      # 将数组展开
       result = result.inject([]) do |t,y|
         t += y.values[x].inject([]){|s,z| s << y.dup.merge(e.keys[x]=>z)}
       end
     end
-        pp result
     return result
   end
 

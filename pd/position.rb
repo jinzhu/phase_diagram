@@ -47,8 +47,8 @@ module Position
 
     # k01*x + c2 = k12*x + c0
     x = (c0 - c2)/(@k01-@k12)
-    y = @k01*x + c2
-    return x,y
+    # 返回 x,y
+    return x,@k01*x + c2
   end
 
   def get_percent(args)

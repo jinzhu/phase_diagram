@@ -61,6 +61,4 @@ Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
   $content  = content
   $panel    = panel
   $oval_num = []
-    $current_item = Pd.new('k')
-    $current_item.show
 end
