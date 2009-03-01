@@ -17,22 +17,23 @@ class Shoes::Panel < Shoes::Widget
     @operate = flow :top => 650,:left => 220 do
       para "选择操作"
       list_box :items => items,:width => 200,:left => 100 do |x|
-        # if $current_item
+
+        MolarWeight.edit if x.text == "摩尔质量"
+
+        if $current_item
           case x.text
           when "相图" then
             $current_item.show
           when "修改相图" then
             $current_item.edit
-          when "摩尔质量" then
-            MolarWeight.edit
           when "元素转换表" then
             $current_item.show_element
           when "删除" then
             $current_item.destory
           end
-        # else
-        #   alert("请先选择一个相图")
-        # end
+        else
+          alert("请先选择一个相图")
+        end
 
         init_operate
       end
