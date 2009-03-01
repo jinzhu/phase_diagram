@@ -1,4 +1,5 @@
 #! /usr/local/bin/shoes design.rb
+$KCODE = 'UTF8'
 
 Shoes.setup do
   gem 'ruport'

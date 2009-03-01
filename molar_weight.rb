@@ -37,6 +37,15 @@ class MolarWeight
       end
     end
 
+    def molarweight(args)
+      if $molarweight[args].to_i > 0
+        return $molarweight[args].to_i
+      else
+        $app.alert("请先设定#{args.strip}的摩尔量")
+        return false
+      end
+    end
+
     def add_row(args)
       return $app.flow do
         args.each { |x| $app.edit_line  x, :width => 150 }

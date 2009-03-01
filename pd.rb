@@ -1,5 +1,4 @@
 #! /usr/local/bin/shoes design.rb
-
 class Pd
   require 'pd/position'
   include Position
