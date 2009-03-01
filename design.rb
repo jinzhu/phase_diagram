@@ -6,7 +6,7 @@ end
 
 $LOAD_PATH <<  File.dirname(__FILE__)
 
-['ruport','yaml','symbol','panel','content','sidebar','pd'].each {|x| require x}
+['ruport','yaml','symbol','panel','content','sidebar','pd','molar_weight'].each {|x| require x}
 
 
 Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
@@ -56,9 +56,10 @@ Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
     end
   end
 
-  $app      = self
-  $sidebar  = sidebar
-  $content  = content
-  $panel    = panel
-  $oval_num = []
+  $app         = self
+  $sidebar     = sidebar
+  $content     = content
+  $panel       = panel
+  $oval_num    = []
+  $molarweight = YAML.load_file(File.join($config_path,'molarweight')) if File.exist?(File.join($config_path,'molarweight'))
 end
