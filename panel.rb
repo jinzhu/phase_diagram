@@ -1,4 +1,4 @@
-#! /usr/local/bin/shoes design.rb
+$KCODE = 'UTF8'
 
 class Shoes::Panel < Shoes::Widget
 

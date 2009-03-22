@@ -1,19 +1,15 @@
-#! /usr/local/bin/shoes design.rb
 $KCODE = 'UTF8'
 
-Shoes.setup do
-  gem 'ruport'
-end
+#NOTE for windows
+$LOAD_PATH <<  File.dirname(__FILE__) << File.join(File.dirname(__FILE__),'gems','ruport-1.6.1','lib') << File.join(File.dirname(__FILE__),'gems','fastercsv-1.2.3','lib') << File.join(File.dirname(__FILE__),'gems','pdf-writer-1.1.8','lib') 
 
-$LOAD_PATH <<  File.dirname(__FILE__)
-
-['ruport','yaml','symbol','panel','content','sidebar','pd','molar_weight'].each {|x| require x}
+['ruport','fastercsv','yaml','symbol','panel','content','sidebar','pd','molar_weight'].each {|x| require x}
 
 
 Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
   background "#BBF".."#BB5", :angle => 0, :curve => 10
 
-  $config_path = File.join(ENV['HOME'],".phase_diagram")
+  $config_path = File.join(ENV['HOME'] || ENV["USERPROFILE"],".phase_diagram")
   Dir.mkdir($config_path) unless File.exist?($config_path)
   Dir.chdir($config_path)
 
