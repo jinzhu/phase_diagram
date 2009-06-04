@@ -10,7 +10,7 @@ Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
   background "#BBF".."#BB5", :angle => 0, :curve => 10
 
   def button *txt
-    txt[0] = Iconv.conv('gbk','utf-8',txt[0])
+    # txt[0] = Iconv.conv('gbk','utf-8',txt[0])
     super
   end
 
