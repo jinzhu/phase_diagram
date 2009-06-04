@@ -46,9 +46,16 @@ class MolarWeight
       end
     end
 
-    # def m_2_w(args)
-    #   return $molarweight[args].to_i if $molarweight[args].to_i > 0
-    # end
+    def m_2_w(element,weight)
+      return 0 unless weight.to_f > 0
+
+      if $molarweight[element].to_i > 0
+        return (weight.to_f / $molarweight[element].to_f).to_s
+      else
+        $app.alert("请先设定#{element.strip}的摩尔量")
+        return false
+      end
+    end
 
     def add_row(args)
       return $app.flow do

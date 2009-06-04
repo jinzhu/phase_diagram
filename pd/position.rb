@@ -60,7 +60,7 @@ module Position
     ph2 = c2*Math.cos(Math.atan(@k01))/@h2
 
     if (ph0 + ph2 <= 1.01) && ph0 > -0.01 && ph2 > -0.01
-      keys   = @config.keys.join(" : ")
+      keys   = '质量比( ' + @config.keys.join(" : ") + ' )'
       result = [ph0,1-ph2-ph0,ph2].map {|x| truncate(x)}.join(" : ")
 
       @rt_p.text = $app.strong(keys) ," = ",$app.strong(result)

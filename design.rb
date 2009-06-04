@@ -10,7 +10,7 @@ Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
   background "#BBF".."#BB5", :angle => 0, :curve => 10
 
   def button *txt
-    # txt[0] = Iconv.conv('gbk','utf-8',txt[0])
+    txt[0] = Iconv.conv('gb18030','utf-8',txt[0])
     super
   end
 
@@ -46,7 +46,7 @@ Shoes.app :width => 1200,:height => 800,:title => '相图分析' do
               para strong(k),:stroke => red
             end
             stack :width => 200 do
-              para strong(v.to_s.empty? ? 0 : v),strong(" 摩尔"),:stroke => "#00F"
+              para strong(MolarWeight.m_2_w(k,v)),strong(" 摩尔"),:stroke => "#00F"
             end
           end
 
