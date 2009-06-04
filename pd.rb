@@ -115,7 +115,7 @@ class Pd
 
     $content.content do
       # 表格标题
-      $app.edit_line '摩尔替换率', :width => 150,:state => 'disabled'
+      $app.edit_line '质量替换率', :width => 150,:state => 'disabled'
       @config.keys.map do |x|
         $app.edit_line :text => x, :width => 150,:state => 'disabled'
       end
