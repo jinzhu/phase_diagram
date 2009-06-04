@@ -60,7 +60,7 @@ class Pd
         children = x.parent.children
         e = {}
         t.size.times do |y|
-          e.merge!(children[2*y].text => MolarWeight.w_2_m(children[2*y].text,children[2*y+1].text))
+          e.merge!(children[2*y].text => children[2*y+1].text)
         end
 
          convert_hash(e).map do |ele|
