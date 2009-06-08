@@ -12,15 +12,15 @@ class Shoes::Panel < Shoes::Widget
   def init_operate
     @operate.clear if @operate
 
-    items = ["相图","元素转换表","修改相图","摩尔质量","删除","摩尔质量转换"]
+    items = ["相图","元素转换表","修改相图","删除","摩尔质量转换"]
 
     @operate = flow :top => 650,:left => 220 do
       para "选择操作"
       list_box :items => items,:width => 200,:left => 100 do |x|
 
-        MolarWeight.edit if x.text == "摩尔质量"
-
-        # if $current_item
+        if x.text == "摩尔质量转换"
+          MolarWeight.edit
+        elsif $current_item
           case x.text
           when "相图" then
             $current_item.show
@@ -30,12 +30,10 @@ class Shoes::Panel < Shoes::Widget
             $current_item.show_element
           when "删除" then
             $current_item.destory
-          when "摩尔质量转换" then
-            MolarWeight.edit
           end
-        # else
-        #   alert("请先选择一个相图")
-        # end
+        else
+          alert("请先选择一个相图")
+        end
 
         init_operate
       end
