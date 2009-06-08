@@ -53,7 +53,7 @@ class MolarWeight
         return (weight.to_f / $molarweight[element].to_f).to_s
       else
         $app.alert("请先设定#{element.strip}的摩尔量")
-        return false
+        return '未知'
       end
     end
 
